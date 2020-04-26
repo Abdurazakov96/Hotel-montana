@@ -7,5 +7,8 @@
 //
 
 protocol SelectedRoomTypeTableViewControllerProtocol {
+        
+    // MARK: - Public method
+    
     func didSelect(roomType: RoomType)
 }

@@ -7,11 +7,9 @@
 //
 
 import UIKit
-
 class RegistrationController: UITableViewController {
     
-    
-    
+    // MARK: - IBOutlets
     
     @IBOutlet var firstNameTextField:  UITextField!
     @IBOutlet var lastNameTextField: UITextField!
@@ -27,27 +25,27 @@ class RegistrationController: UITableViewController {
     @IBOutlet var wifiSwitch: UISwitch!
     @IBOutlet var roomTypeLabel: UILabel!
     
+    // MARK: - Public properties
     
     var inDatePickerLabelIndex = IndexPath(row: 0, section: 1)
     var inDatePickerIndex = IndexPath(row: 1, section: 1)
     var outDatePickerLabelIndex = IndexPath(row: 2, section: 1)
     var outDatePickerIndex = IndexPath(row: 3, section: 1)
-    
     var inDatePickerStatus:Bool = false {
         didSet {
             checkInDatePicker.isHidden = !inDatePickerStatus
         }
+        
     }
-    
     var outDatePickerStatus:Bool = false {
         didSet {
             checkOutDatePicker.isHidden = !outDatePickerStatus
         }
+        
     }
-    
     var roomType: RoomType?
     
-    
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,8 +60,16 @@ class RegistrationController: UITableViewController {
         addDoneButtonTo(firstNameTextField)
         addDoneButtonTo(lastNameTextField)
         addDoneButtonTo(emailTextField)
-        
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard segue.identifier == "SelectedRoomType" else {return}
+        let destination = segue.destination as? SelectedTableViewController
+        destination?.delegate = self
+        destination?.roomType = roomType
+    }
+    
+    // MARK: - Public methods
     
     func updatePeople() {
         adultsLabel.text = String(Int(adultsStepper.value))
@@ -87,15 +93,10 @@ class RegistrationController: UITableViewController {
         else {
             roomTypeLabel.text = "Not set"
         }
+        
     }
     
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard segue.identifier == "SelectedRoomType" else {return}
-        let destination = segue.destination as? SelectedTableViewController
-        destination?.delegate = self
-        destination?.roomType = roomType
-    }
+    // MARK: - IBActions
     
     @IBAction func dateInPickerValueChanged(_ sender: UIDatePicker) {
         updateDateViews()
@@ -105,10 +106,8 @@ class RegistrationController: UITableViewController {
         updatePeople()
     }
     
-    
     @IBAction func doneBarButtonTapped(_ sender: UIBarButtonItem) {
         let wifiSwitchStatus = wifiSwitch.isOn
-        
         
         guard firstNameTextField.text != ""  else {return}
         guard firstNameTextField.text != ""  else {return}
@@ -126,16 +125,16 @@ class RegistrationController: UITableViewController {
             wifi: wifiSwitchStatus)
         
         print(registration)
-        
     }
-    
-    
-    
-    
     
 }
 
+// MARK: - Extension
+
 extension RegistrationController {
+    
+    // MARK: - Lifecycle
+    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath {
         case inDatePickerIndex:
@@ -145,10 +144,17 @@ extension RegistrationController {
         default:
             return UITableView.automaticDimension
         }
+        
     }
+    
 }
 
+// MARK: - Extension
+
 extension RegistrationController {
+    
+    // MARK: - Lyfecycle
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath {
         case inDatePickerLabelIndex:
@@ -164,10 +170,13 @@ extension RegistrationController {
         tableView.endUpdates()
     }
     
-    
 }
 
+// MARK: - Extension
+
 extension RegistrationController: SelectedRoomTypeTableViewControllerProtocol{
+    
+    // MARK: - Public method
     
     func didSelect(roomType: RoomType) {
         self.roomType = roomType
@@ -175,7 +184,20 @@ extension RegistrationController: SelectedRoomTypeTableViewControllerProtocol{
     }
 }
 
+// MARK: - Extension
+
 extension RegistrationController: UITextFieldDelegate {
+    
+    // MARK: - Lifecycle
+    
+    // Скрытие клавиатуры по тапу за пределами Text View
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        
+        view.endEditing(true) // Скрывает клавиатуру, вызванную для любого объекта
+    }
+    
+    // MARK: - Private method
     
     // Метод для отображения кнопки "Готово" на цифровой клавиатуре
     private func addDoneButtonTo(_ textField: UITextField) {
@@ -196,22 +218,20 @@ extension RegistrationController: UITextFieldDelegate {
         keyboardToolbar.items = [flexBarButton, doneButton]
     }
     
-    @objc private func didTapDone() {
-        view.endEditing(true)
-    }
-    
+    // MARK: - Public method
     // Скрываем клавиатуру нажатием на "Done"
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
     }
     
-    // Скрытие клавиатуры по тапу за пределами Text View
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        
-        view.endEditing(true) // Скрывает клавиатуру, вызванную для любого объекта
+    // MARK: - Objc private method
+    
+    @objc private func didTapDone() {
+        view.endEditing(true)
     }
+    
+    
     
     
 }
