@@ -7,11 +7,14 @@
 //
 
 import UIKit
-
 class SelectedTableViewController: UITableViewController {
 
+        // MARK: - Public properties
+    
     var delegate: SelectedRoomTypeTableViewControllerProtocol?
     var roomType: RoomType?
+    
+        // MARK: - Lifecycle
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
       return  RoomType.all.count
@@ -32,4 +35,5 @@ class SelectedTableViewController: UITableViewController {
         delegate?.didSelect(roomType: roomType!)
         tableView.reloadData()
     }
+    
 }
